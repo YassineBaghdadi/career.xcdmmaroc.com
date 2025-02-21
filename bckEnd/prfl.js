@@ -1,15 +1,15 @@
-const express = require("express");
+const express = require('express');
 const app = express.Router();
-require("dotenv").config();
-const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
+require('dotenv').config();
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 app.use(bodyParser.json());
 app.use(cookieParser());
-const path = require("path");
-const jwt = require("jsonwebtoken");
-const multer = require("multer");
+const path = require('path');
+const jwt = require('jsonwebtoken');
+const multer = require('multer');
 
-const { db } = require("./DB_cnx");
+const { db } = require('./DB_cnx');
 
 app.use((req, res, next) => {
   jwt.verify(
@@ -17,7 +17,7 @@ app.use((req, res, next) => {
     String(process.env.sessionSecret),
     (err, decoded) => {
       if (err) {
-        console.log("redirect to login page");
+        console.log('redirect to login page');
 
         res.redirect(`/login?next=${req.originalUrl}`);
       } else {
@@ -27,13 +27,13 @@ app.use((req, res, next) => {
   );
 });
 
-app.use(express.static(path.join(__dirname, "../frntEnd"), { index: false }));
+app.use(express.static(path.join(__dirname, '../frntEnd'), { index: false }));
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frntEnd", "Profil.html"));
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frntEnd', 'Profil.html'));
 });
 
-app.get("/info", async (req, res) => {
+app.get('/info', async (req, res) => {
   var [info] = await db.execute(
     `select uniqID, pswrd, civilite, fname, lname, prflTtle, bd, nationality, familystatus, email, phone, linkedIn, address, zip, city, disponibility, actualFonction, 
     actualPost, actualSector, desiredSector, actualRegion, actualSalaire, desiredFonction, expYrs, desiredRegion, desiredSalaire, formation, etudLevel 
@@ -52,21 +52,21 @@ app.get("/info", async (req, res) => {
   res.json({ info: info[0], langs: langs, skls: skills });
 });
 
-app.post("/removeLang", async (req, res) => {
+app.post('/removeLang', async (req, res) => {
   await db.execute(
     `delete from _carreerCondidatsLangs where id = ${req.body.i}`
   );
-  res.json("done");
+  res.json('done');
 });
 
-app.post("/removeSKL", async (req, res) => {
+app.post('/removeSKL', async (req, res) => {
   await db.execute(
     `delete from _carreerCondidatsSkills where id = ${req.body.i}`
   );
-  res.json("done");
+  res.json('done');
 });
 
-app.post("/addLang", async (req, res) => {
+app.post('/addLang', async (req, res) => {
   var [old] = await db.execute(
     `select count(id) as c from _carreerCondidatsLangs where nme = "${req.body.n}"`
   );
@@ -74,44 +74,44 @@ app.post("/addLang", async (req, res) => {
     return res.json(1);
   }
   await db.execute(
-    `insert into _carreerCondidatsLangs (nme, lvl, cndidat) values("${req.body.n}", "${req.body.l}", ${req.cookies.cndDt.id})`
+    `insert into _carreerCondidatsLangs (nme, lvl, cndidat, addedBy, addedDte) values("${req.body.n}", "${req.body.l}", ${req.cookies.cndDt.id}, "${req.cookies.cndDt.fname} ${req.cookies.cndDt.lname}", NOW())`
   );
-  res.json("done");
+  res.json('done');
 });
 
-app.post("/addSKL", async (req, res) => {
+app.post('/addSKL', async (req, res) => {
   await db.execute(
     `insert into _carreerCondidatsSkills (nme, cndidat) values("${req.body.n}", ${req.cookies.cndDt.id})`
   );
-  res.json("done");
+  res.json('done');
 });
 
-app.get("/getCV", async (req, res) => {
+app.get('/getCV', async (req, res) => {
   const fileId = req.cookies.cndDt.id;
 
   try {
     const [rows] = await db.execute(
-      "SELECT cv, cvEXT FROM _carreerCondidats WHERE id = ?",
+      'SELECT cv, cvEXT FROM _carreerCondidats WHERE id = ?',
       [fileId]
     );
 
     if (rows.length === 0) {
-      return res.status(404).send("File not found");
+      return res.status(404).send('File not found');
     }
 
     const fileData = rows[0].cv;
     const fileExtension = rows[0].cvEXT;
 
-    res.setHeader("Content-Type", "application/octet-stream");
+    res.setHeader('Content-Type', 'application/octet-stream');
     res.setHeader(
-      "Content-Disposition",
+      'Content-Disposition',
       `attachment; filename="cv de ${req.cookies.cndDt.fname} ${req.cookies.cndDt.lname}.${fileExtension}"`
     );
 
-    res.end(fileData, "binary");
+    res.end(fileData, 'binary');
   } catch (error) {
-    console.error("Error fetching file:", error);
-    res.status(500).send("An error occurred while fetching the file");
+    console.error('Error fetching file:', error);
+    res.status(500).send('An error occurred while fetching the file');
   }
 });
 
@@ -119,28 +119,28 @@ const storage = multer.memoryStorage();
 
 const upload = multer({ storage: storage });
 
-app.post("/uploadCV", upload.single("cv"), async (req, res) => {
+app.post('/uploadCV', upload.single('cv'), async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).send("No file uploaded");
+      return res.status(400).send('No file uploaded');
     }
 
     const fileData = req.file.buffer;
-    const fileExtension = path.extname(req.file.originalname).split(".")[1];
+    const fileExtension = path.extname(req.file.originalname).split('.')[1];
 
     await db.execute(
-      "update _carreerCondidats set cv = ?, cvEXT = ? where id = ?",
+      'update _carreerCondidats set cv = ?, cvEXT = ? where id = ?',
       [fileData, fileExtension, req.cookies.cndDt.id]
     );
 
-    res.send("File uploaded successfully");
+    res.send('File uploaded successfully');
   } catch (error) {
-    console.error("Error uploading file:", error);
-    res.status(500).send("An error occurred while uploading the file");
+    console.error('Error uploading file:', error);
+    res.status(500).send('An error occurred while uploading the file');
   }
 });
 
-app.post("/update", async (req, res) => {
+app.post('/update', async (req, res) => {
   await db.execute(`update _carreerCondidats set 
       civilite = "${req.body.civilite}",
       fname = "${req.body.firstName}",
@@ -171,61 +171,61 @@ app.post("/update", async (req, res) => {
     
     `);
 
-  res.json("done");
+  res.json('done');
 });
 
-app.post("/changePic", upload.single("pc"), async (req, res) => {
+app.post('/changePic', upload.single('pc'), async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).send("No file uploaded");
+      return res.status(400).send('No file uploaded');
     }
 
     const fileData = req.file.buffer;
-    const fileExtension = path.extname(req.file.originalname).split(".")[1];
+    const fileExtension = path.extname(req.file.originalname).split('.')[1];
 
     await db.execute(
-      "update _carreerCondidats set pic = ?, picEXT = ? where id = ?",
+      'update _carreerCondidats set pic = ?, picEXT = ? where id = ?',
       [fileData, fileExtension, req.cookies.cndDt.id]
     );
 
-    res.send("File uploaded successfully");
+    res.send('File uploaded successfully');
   } catch (error) {
-    console.error("Error uploading file:", error);
-    res.status(500).send("An error occurred while uploading the file");
+    console.error('Error uploading file:', error);
+    res.status(500).send('An error occurred while uploading the file');
   }
 });
 
-app.get("/getPrflPic", async (req, res) => {
+app.get('/getPrflPic', async (req, res) => {
   const fileId = req.params.id;
 
   try {
     const [rows] = await db.execute(
-      "SELECT pic, picEXT FROM _carreerCondidats WHERE id = ?",
+      'SELECT pic, picEXT FROM _carreerCondidats WHERE id = ?',
       [req.cookies.cndDt.id]
     );
 
     if (rows.length === 0) {
-      return res.status(404).send("Image not found");
+      return res.status(404).send('Image not found');
     }
 
     const imageData = rows[0].pic;
     const imageExtension = rows[0].picEXT;
 
     // Set the correct content type for the image
-    res.setHeader("Content-Type", `image/${imageExtension}`);
-    res.end(imageData, "binary");
+    res.setHeader('Content-Type', `image/${imageExtension}`);
+    res.end(imageData, 'binary');
   } catch (error) {
-    console.error("Error fetching image:", error);
-    res.status(500).send("An error occurred while fetching the image");
+    console.error('Error fetching image:', error);
+    res.status(500).send('An error occurred while fetching the image');
   }
 });
 
 app.get(/^.*\.html$/, (req, res) => {
-  res.redirect(301, "/");
+  res.redirect(301, '/');
 });
 
 app.get(/^.*\.js$/, (req, res) => {
-  res.redirect(301, "/");
+  res.redirect(301, '/');
 });
 
 module.exports = app;
