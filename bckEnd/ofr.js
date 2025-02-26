@@ -1,15 +1,15 @@
-const express = require("express");
+const express = require('express');
 const app = express.Router();
-require("dotenv").config();
-const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
+require('dotenv').config();
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 app.use(bodyParser.json());
 app.use(cookieParser());
-const path = require("path");
-const jwt = require("jsonwebtoken");
-const moment = require("moment-timezone");
-const { sendMail } = require("./mls");
-const { db } = require("./DB_cnx");
+const path = require('path');
+const jwt = require('jsonwebtoken');
+const moment = require('moment-timezone');
+const { sendMail } = require('./mls');
+const { db } = require('./DB_cnx');
 
 // app.use((req, res, next) => {
 //   jwt.verify(
@@ -25,28 +25,28 @@ const { db } = require("./DB_cnx");
 //   );
 // });
 
-app.use(express.static(path.join(__dirname, "../frntEnd"), { index: false }));
+app.use(express.static(path.join(__dirname, '../frntEnd'), { index: false }));
 
 function getCurrentTime() {
-  return moment.tz("Africa/Casablanca").format("YYYY-MM-DD HH:mm:ss");
+  return moment.tz('Africa/Casablanca').format('YYYY-MM-DD HH:mm:ss');
 }
 
-app.get("/:ofr", async (req, res) => {
+app.get('/:ofr', async (req, res) => {
   var [ofr] = await db.execute(
     `select count(id) as i from _JobOffers where uniqId = "${req.params.ofr}"`
   );
 
   if (ofr[0].i) {
-    res.sendFile(path.join(__dirname, "../frntEnd", "Offre-Single.html"));
+    res.sendFile(path.join(__dirname, '../frntEnd', 'Offre-Single.html'));
   } else {
     res.json({
       error: {
-        name: "Error",
+        name: 'Error',
         status: 404,
-        message: "Invalid Request",
+        message: 'Invalid Request',
         statusCode: 404,
       },
-      message: "wrong url",
+      message: 'wrong url',
     });
   }
 
@@ -55,7 +55,9 @@ app.get("/:ofr", async (req, res) => {
   // }
 });
 
-app.get("/details/:i", async (req, res) => {
+app.get('/details/:i', async (req, res) => {
+  console.log(req.params.i);
+
   var [ofr] = await db.execute(
     `select * from _JobOffers where uniqId = "${req.params.i}"`
   );
@@ -63,25 +65,25 @@ app.get("/details/:i", async (req, res) => {
   if (!ofr[0]) {
     res.json({
       error: {
-        name: "Error",
+        name: 'Error',
         status: 404,
-        message: "Invalid Request",
+        message: 'Invalid Request',
         statusCode: 404,
       },
-      message: "wrong url",
+      message: 'wrong url',
     });
     return;
   }
   res.json(ofr[0]);
 });
 
-app.post("/Apply", async (req, res) => {
+app.post('/Apply', async (req, res) => {
   jwt.verify(
     req.cookies.jwtTkn,
     String(process.env.sessionSecret),
     async (err, decoded) => {
       if (err) {
-        res.json({ c: "r", r: `/login?next=${req.originalUrl}` });
+        res.json({ c: 'r', r: `/login?next=${req.originalUrl}` });
       } else {
         var [ofid] = await db.execute(
           `select id, nme, rcrtPour from _JobOffers where uniqId = '${req.body.o}'`
@@ -113,7 +115,7 @@ app.post("/Apply", async (req, res) => {
   );
 });
 
-app.post("/checkApply", async (req, res) => {
+app.post('/checkApply', async (req, res) => {
   jwt.verify(
     req.cookies.jwtTkn,
     String(process.env.sessionSecret),

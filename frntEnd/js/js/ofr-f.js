@@ -1,6 +1,6 @@
 const Toast = Swal.mixin({
   toast: true,
-  position: "top-end",
+  position: 'top-end',
   showConfirmButton: false,
   timer: 5000,
   timerProgressBar: true,
@@ -13,10 +13,15 @@ const Toast = Swal.mixin({
 $(document).ready(() => {
   const ofId =
     (window.location.href.match(/\/Offer\/([^\/]+)/) || [])[1] || null;
-  // console.log(ofId);
+
+  const urlParams = new URLSearchParams(window.location.search);
+  var pltfrm = urlParams.get('pr');
+  var prnj = urlParams.get('pr').split('%')[1];
+
+  console.log(prnj);
 
   if (!ofId) {
-    window.location.href = "/";
+    window.location.href = '/';
   }
 
   fetch(`/Offer/details/${ofId}`)
@@ -30,31 +35,31 @@ $(document).ready(() => {
     .then(async (data) => {
       // console.log(data);
 
-      $(".ofNme").html(data.nme);
-      $("#startdate").html(data.startDte.split("T")[0]);
-      $("#enddate").html(data.endDte.split("T")[0]);
-      $("#region").html(`${data.place}, `);
-      $("#City").html(data.city);
-      $("#salary").html(data.salair);
-      $("#experience").html(data.expYrs);
-      $("#education").html(data.etudLevel);
-      $("#Secteur").html(data.sector);
-      $("#Fonction").html(data.fonctions);
-      $("#wrkTpe").html(data.wrkTpe);
-      $("#cmpny").html(data.cmpny);
-      $("#postInfo").html(data.post);
-      $("#mssions").html(data.missions);
-      $("#profileInfo").html(data.prfile);
+      $('.ofNme').html(data.nme);
+      $('#startdate').html(data.startDte.split('T')[0]);
+      $('#enddate').html(data.endDte.split('T')[0]);
+      $('#region').html(`${data.place}, `);
+      $('#City').html(data.city);
+      $('#salary').html(data.salair);
+      $('#experience').html(data.expYrs);
+      $('#education').html(data.etudLevel);
+      $('#Secteur').html(data.sector);
+      $('#Fonction').html(data.fonctions);
+      $('#wrkTpe').html(data.wrkTpe);
+      $('#cmpny').html(data.cmpny);
+      $('#postInfo').html(data.post);
+      $('#mssions').html(data.missions);
+      $('#profileInfo').html(data.prfile);
     })
     .catch((error) => {
-      console.error("Error:", error.message);
+      console.error('Error:', error.message);
     });
 
   var checkApply = () => {
-    fetch("/Offer/checkApply", {
-      method: "POST",
+    fetch('/Offer/checkApply', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         o: ofId,
@@ -64,7 +69,7 @@ $(document).ready(() => {
         if (response.ok) {
           return response.json();
         } else {
-          throw new Error("Login failed");
+          throw new Error('Login failed');
         }
       })
       .then(async (data) => {
@@ -72,25 +77,25 @@ $(document).ready(() => {
 
         if (data.a == 1) {
           var dte = data.d;
-          $("#aplyBtnArea").html(
+          $('#aplyBtnArea').html(
             `<h4 style="color: orange"> Vous avez déjà postulé à cette offre d'emploi le ${
-              dte.replace("T", " à ").split(".")[0]
+              dte.replace('T', ' à ').split('.')[0]
             }  </h4>`
           );
         }
       })
       .catch((error) => {
-        console.error("Login Error:", error);
+        console.error('Login Error:', error);
       });
   };
 
   checkApply();
 
-  $("#aplyBtn").click(() => {
-    fetch("/Offer/Apply", {
-      method: "POST",
+  $('#aplyBtn').click(() => {
+    fetch('/Offer/Apply', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         o: ofId,
@@ -100,61 +105,61 @@ $(document).ready(() => {
         if (response.ok) {
           return response.json();
         } else {
-          throw new Error("Login failed");
+          throw new Error('Login failed');
         }
       })
       .then(async (data) => {
         checkApply();
-        if (data.c == "r") {
+        if (data.c == 'r') {
           await Swal.fire({
-            icon: "error",
-            title: "Oops...",
+            icon: 'error',
+            title: 'Oops...',
             text: "Vous devez d'abord vous connecter pour pouvoir postuler à cette offre.",
           });
           window.location.href = `/login?next=/Offer/${ofId}`;
         } else if (data.c == 1) {
           Toast.fire({
-            icon: "Error",
-            title: "Votre candidature pour cette offre a déjà été envoyée.",
+            icon: 'Error',
+            title: 'Votre candidature pour cette offre a déjà été envoyée.',
           });
         } else {
-          await Swal.fire("Merci ! Votre candidature a bien été enregistrée.");
+          await Swal.fire('Merci ! Votre candidature a bien été enregistrée.');
           // window.location.href = "/";
         }
       })
       .catch((error) => {
-        console.error("Login Error:", error);
+        console.error('Login Error:', error);
       });
   });
 
-  $("#subBtn").click(() => {
+  $('#subBtn').click(() => {
     // alert($("#subEmail").val());
-    fetch("/subscribe", {
-      method: "POST",
+    fetch('/subscribe', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        e: $("#subEmail").val(),
+        e: $('#subEmail').val(),
       }),
     })
       .then((response) => {
         if (response.ok) {
           return response.json();
         } else {
-          throw new Error("Login failed");
+          throw new Error('Login failed');
         }
       })
       .then(async (data) => {
-        if (data == "subscribed") {
+        if (data == 'subscribed') {
           Toast.fire({
-            icon: "success",
-            title: "Votre email a été enregistré dans notre newsletter.",
+            icon: 'success',
+            title: 'Votre email a été enregistré dans notre newsletter.',
           });
         }
       })
       .catch((error) => {
-        console.error("Login Error:", error);
+        console.error('Login Error:', error);
       });
   });
 });
