@@ -11,14 +11,16 @@ const Toast = Swal.mixin({
 });
 
 $(document).ready(() => {
-  const ofId =
+  const url =
     (window.location.href.match(/\/Offer\/([^\/]+)/) || [])[1] || null;
+  var ofId = url.split('?')[0];
+  console.log(ofId);
 
-  const urlParams = new URLSearchParams(window.location.search);
-  var pltfrm = urlParams.get('pr');
-  var prnj = urlParams.get('pr').split('%')[1];
+  // const urlParams = new URLSearchParams(window.location.search);
+  // var pltfrm = urlParams.get('pr');
+  // var prnj = urlParams.get('pr') ? urlParams.get('pr').split('%')[1] : null;
 
-  console.log(prnj);
+  // console.log(prnj);
 
   if (!ofId) {
     window.location.href = '/';
@@ -73,7 +75,7 @@ $(document).ready(() => {
         }
       })
       .then(async (data) => {
-        console.log(data);
+        // console.log(data);
 
         if (data.a == 1) {
           var dte = data.d;
