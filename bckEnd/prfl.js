@@ -171,7 +171,37 @@ app.post('/update', async (req, res) => {
     
     `);
 
-  await db.execute(`update _carreerCondidats set 
+  // await db.execute(`update _carreerCondidats set
+  //     civilite = "${req.body.civilite}",
+  //     fname = "${req.body.firstName}",
+  //     lname = "${req.body.lastName}",
+  //     bd = "${req.body.birthDate}",
+  //     nationality = "${req.body.nationality}",
+  //     familystatus = "${req.body.maritalStatus}",
+  //     phone = "${req.body.phone}",
+  //     email = "${req.body.email}",
+  //     linkedIn = "${req.body.linkedin}",
+  //     address = "${req.body.address}",
+  //     zip = "${req.body.zip}",
+  //     city = "${req.body.city}",
+  //     disponibility = "${req.body.availability}",
+  //     actualFonction = "${req.body.functions}",
+  //     desiredFonction = "${req.body.desiredFunctions}",
+  //     prflTtle = "${req.body.title}",
+  //     expYrs = "${req.body.experienceYears}",
+  //     actualSector = "${req.body.sector}",
+  //     desiredSector = "${req.body.desiredSector}",
+  //     actualRegion = "${req.body.regionA}",
+  //     desiredRegion = "${req.body.regionS}",
+  //     actualSalaire = "${req.body.salaryA}",
+  //     desiredSalaire = "${req.body.salaryS}",
+  //     etudLevel = "${req.body.educationLevel}",
+  //     formation = "${req.body.formation}"
+  //     where id = ${req.cookies.cndDt.id}
+
+  //   `);
+
+  res.json(`update _carreerCondidats set 
       civilite = "${req.body.civilite}",
       fname = "${req.body.firstName}",
       lname = "${req.body.lastName}",
@@ -200,8 +230,6 @@ app.post('/update', async (req, res) => {
       where id = ${req.cookies.cndDt.id}
     
     `);
-
-  res.json('done');
 });
 
 app.post('/changePic', upload.single('pc'), async (req, res) => {
