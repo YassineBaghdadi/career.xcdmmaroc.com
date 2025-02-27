@@ -111,7 +111,7 @@ $(document).ready(() => {
         }
       })
       .then(async (data) => {
-        console.log(data);
+        // console.log(data);
 
         checkApply();
         if (data.c == 'r') {
@@ -120,7 +120,7 @@ $(document).ready(() => {
             title: 'Oops...',
             text: "Vous devez d'abord vous connecter pour pouvoir postuler à cette offre.",
           });
-          // window.location.href = `/login?next=/Offer/${ofId}`;
+          window.location.href = `/login?next=/Offer/${ofId}`;
         } else if (data.c == 1) {
           Toast.fire({
             icon: 'Error',
