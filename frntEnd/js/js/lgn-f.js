@@ -130,7 +130,7 @@ $(document).ready(() => {
           }
         })
         .then((data) => {
-          console.log(data);
+          // console.log(data);
           if (data) {
             const urlParams = new URLSearchParams(window.location.search);
             const nxt = urlParams.get('next') || '/';
