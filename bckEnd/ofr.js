@@ -83,7 +83,7 @@ app.post('/Apply', async (req, res) => {
     String(process.env.sessionSecret),
     async (err, decoded) => {
       if (err) {
-        res.json({ c: 'r', r: `/login?next=${req.originalUrl}` });
+        res.json({ c: 'r', r: `/login?next=${req.originalUrl}`, e: err });
       } else {
         var [ofid] = await db.execute(
           `select id, nme, rcrtPour from _JobOffers where uniqId = '${req.body.o}'`
