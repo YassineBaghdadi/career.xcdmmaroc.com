@@ -366,6 +366,8 @@ $(document).ready(() => {
           }
         })
         .then((data) => {
+          console.log(data);
+
           getInfos();
           Toast.fire({
             icon: 'success',
