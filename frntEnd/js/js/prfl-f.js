@@ -93,7 +93,7 @@ var getInfos = () => {
 
       $('#fname').val(data.info.fname);
       $('#lname').val(data.info.lname);
-      $('#bd').val(data.info.bd);
+      $('#bd').val(data.info.bd.split('T')[0]);
       $('#nationality').val(data.info.nationality);
 
       // $("#Situation_familiale").val(data.info.familystatus);
