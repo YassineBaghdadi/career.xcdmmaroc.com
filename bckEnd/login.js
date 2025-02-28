@@ -22,7 +22,7 @@ const { db } = require('./DB_cnx');
 
 // app.use((req, res, next) => {
 //   jwt.verify(
-//     req.cookies.jwtTkn,
+//     req.cookies.jwtCndTkn,
 //     String(process.env.sessionSecret),
 //     (err, decoded) => {
 //       if (err) {
@@ -79,7 +79,7 @@ app.use(passport.initialize());
 
 app.get('/', (req, res) => {
   jwt.verify(
-    req.cookies.jwtTkn,
+    req.cookies.jwtCndTkn,
     String(process.env.sessionSecret),
     (err, decoded) => {
       if (!err) {
@@ -205,7 +205,7 @@ app.post('/login', async (req, res) => {
       user.id,
     ]);
 
-    res.cookie('jwtTkn', token, {
+    res.cookie('jwtCndTkn', token, {
       httpOnly: true,
     });
     // console.log(token);
@@ -219,7 +219,7 @@ app.post('/login', async (req, res) => {
 
 app.get('/checkLg', async (req, res) => {
   jwt.verify(
-    req.cookies.jwtTkn,
+    req.cookies.jwtCndTkn,
     String(process.env.sessionSecret),
     (err, decoded) => {
       if (!err) {

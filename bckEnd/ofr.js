@@ -13,7 +13,7 @@ const { db } = require('./DB_cnx');
 
 // app.use((req, res, next) => {
 //   jwt.verify(
-//     req.cookies.jwtTkn,
+//     req.cookies.jwtCndTkn,
 //     String(process.env.sessionSecret),
 //     (err, decoded) => {
 //       if (err) {
@@ -79,7 +79,7 @@ app.get('/details/:i', async (req, res) => {
 
 app.post('/Apply', async (req, res) => {
   jwt.verify(
-    req.cookies.jwtTkn,
+    req.cookies.jwtCndTkn,
     String(process.env.sessionSecret),
     async (err, decoded) => {
       if (err) {
@@ -117,7 +117,7 @@ app.post('/Apply', async (req, res) => {
 
 app.post('/checkApply', async (req, res) => {
   jwt.verify(
-    req.cookies.jwtTkn,
+    req.cookies.jwtCndTkn,
     String(process.env.sessionSecret),
     async (err, decoded) => {
       if (err) {

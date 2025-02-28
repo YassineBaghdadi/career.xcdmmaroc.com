@@ -13,7 +13,7 @@ const { db } = require('./DB_cnx');
 
 app.use((req, res, next) => {
   jwt.verify(
-    req.cookies.jwtTkn,
+    req.cookies.jwtCndTkn,
     String(process.env.sessionSecret),
     (err, decoded) => {
       if (err) {
