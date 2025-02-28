@@ -111,7 +111,7 @@ $(document).ready(() => {
         }
       })
       .then(async (data) => {
-        // console.log(data);
+        console.log(data);
 
         checkApply();
         if (data.c == 'r') {

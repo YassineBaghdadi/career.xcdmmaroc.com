@@ -10,6 +10,7 @@ const jwt = require('jsonwebtoken');
 const multer = require('multer');
 
 const { db } = require('./DB_cnx');
+const { lg } = require('./lg');
 
 app.use((req, res, next) => {
   jwt.verify(
@@ -34,22 +35,27 @@ app.get('/', (req, res) => {
 });
 
 app.get('/info', async (req, res) => {
-  var [info] = await db.execute(
-    `select uniqID, pswrd, civilite, fname, lname, prflTtle, bd, nationality, familystatus, email, phone, linkedIn, address, zip, city, disponibility, actualFonction, 
-    actualPost, actualSector, desiredSector, actualRegion, actualSalaire, desiredFonction, expYrs, desiredRegion, desiredSalaire, formation, etudLevel 
-    from _carreerCondidats where id = ${req.cookies.cndDt.id}`
-  );
+  try {
+    var [info] = await db.execute(
+      `select uniqID, pswrd, civilite, fname, lname, prflTtle, bd, nationality, familystatus, email, phone, linkedIn, address, zip, city, disponibility, actualFonction, 
+      actualPost, actualSector, desiredSector, actualRegion, actualSalaire, desiredFonction, expYrs, desiredRegion, desiredSalaire, formation, etudLevel 
+      from _carreerCondidats where id = ${req.cookies.cndDt.id}`
+    );
 
-  var [langs] = await db.execute(
-    `select * from _carreerCondidatsLangs where cndidat = ${req.cookies.cndDt.id}`
-  );
-  // console.log(langs);
+    var [langs] = await db.execute(
+      `select * from _carreerCondidatsLangs where cndidat = ${req.cookies.cndDt.id}`
+    );
+    // console.log(langs);
 
-  var [skills] = await db.execute(
-    `select * from _carreerCondidatsSkills where cndidat = ${req.cookies.cndDt.id}`
-  );
+    var [skills] = await db.execute(
+      `select * from _carreerCondidatsSkills where cndidat = ${req.cookies.cndDt.id}`
+    );
 
-  res.json({ info: info[0], langs: langs, skls: skills });
+    res.json({ info: info[0], langs: langs, skls: skills });
+  } catch (error) {
+    console.log(error);
+    lg.error(error);
+  }
 });
 
 app.post('/removeLang', async (req, res) => {
